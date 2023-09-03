@@ -1,21 +1,21 @@
 interface Props {
     item_list: string[];
-    selected_item: string;
-    onItemSelect: (it: string) => void;
+    selected_index: number;
+    onItemSelect: (id: number) => void;
 }
 
-function Filter({ item_list, selected_item, onItemSelect }: Props) {
+function Filter({ item_list, selected_index, onItemSelect }: Props) {
     return (
         <ul className="list-group">
-            {item_list.map((it) => (
+            {item_list.map((it, id) => (
                 <li
                     className={
-                        it === selected_item
+                        id === selected_index
                             ? "list-group-item active"
                             : "list-group-item"
                     }
-                    key={it}
-                    onClick={() => onItemSelect(it)}
+                    key={id}
+                    onClick={() => onItemSelect(id)}
                 >
                     {it}
                 </li>

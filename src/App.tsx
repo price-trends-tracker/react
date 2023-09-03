@@ -12,7 +12,12 @@ function App() {
     const [item_list, setItemList] = useState<(SsdItem | PvItem | OtherItem)[]>(
         []
     );
-    const [selected_item, setSelectedItem] = useState<string>("");
+    const [selected_item_index, setSelectedItemIndex] = useState<number>(-1);
+
+    const toggleCategory = (cat: string) => {
+        setSelectedCategory(cat);
+        setSelectedItemIndex(-1);
+    };
 
     useEffect(() => {
         fetch("http://127.0.0.1:8000/categories/")
@@ -43,7 +48,7 @@ function App() {
                     <Navbar
                         category_list={category_list}
                         selected_category={selected_category}
-                        onCategorySelect={setSelectedCategory}
+                        onCategorySelect={toggleCategory}
                     />
                 )}
             </div>
@@ -60,8 +65,8 @@ function App() {
                                 item_list={item_list.map((it) =>
                                     getItemName(it)
                                 )}
-                                selected_item={selected_item}
-                                onItemSelect={setSelectedItem}
+                                selected_index={selected_item_index}
+                                onItemSelect={setSelectedItemIndex}
                             />
                         </div>
                     </div>
