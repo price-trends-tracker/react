@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
-import { Category } from "./interfaces";
+import { SsdItem, PvItem, OtherItem, getItemName } from "./interfaces";
 import Navbar from "./components/Navbar";
+import Filter from "./components/Filter";
 
 function App() {
-    const [category_list, setCategoryList] = useState<Category[]>([]);
-    const [select_items, setSelectedItems] = useState<number[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    const [category_list, setCategoryList] = useState<string[]>([]);
+    const [selected_category, setSelectedCategory] = useState("");
+
+    const [item_list, setItemList] = useState<(SsdItem | PvItem | OtherItem)[]>(
+        []
+    );
+    const [selected_item, setSelectedItem] = useState<string>("");
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/info")
+        fetch("http://127.0.0.1:8000/categories/")
             .then((res) => res.json())
             .then((result) => {
                 setCategoryList(result);
@@ -16,33 +23,50 @@ function App() {
             });
     }, []);
 
-    const hashItem = (category_id: number, item_id: number): number => {
-        return category_id * 1000 + item_id;
-    };
+    useEffect(() => {
+        if (!selected_category) return;
 
-    const toggleItem = (cat_id: number, item_id: number) => {
-        const id = hashItem(cat_id, item_id);
-
-        if (select_items.includes(id))
-            setSelectedItems(select_items.filter((it) => it !== id));
-        else setSelectedItems([...select_items, id]);
-    };
+        const endpoint = `http://127.0.0.1:8000/${selected_category.toLocaleLowerCase()}/`;
+        fetch(endpoint)
+            .then((res) => res.json())
+            .then((result) => {
+                setItemList(result);
+            });
+    }, [selected_category]);
 
     return (
         <>
-            <div>
+            <div id="navbar">
                 {loading ? (
                     "Loading"
                 ) : (
                     <Navbar
-                        categroy_list={category_list}
-                        seleted_items={select_items}
-                        hashItem={hashItem}
-                        onToggleItem={toggleItem}
+                        category_list={category_list}
+                        selected_category={selected_category}
+                        onCategorySelect={setSelectedCategory}
                     />
                 )}
             </div>
-            <p>{select_items}</p>
+
+            {selected_category && (
+                <div className="row">
+                    <div className="col-sm-3">
+                        <div
+                            className="card"
+                            id="filter"
+                            style={{ margin: "30px" }}
+                        >
+                            <Filter
+                                item_list={item_list.map((it) =>
+                                    getItemName(it)
+                                )}
+                                selected_item={selected_item}
+                                onItemSelect={setSelectedItem}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

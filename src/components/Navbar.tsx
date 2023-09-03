@@ -1,25 +1,20 @@
-import { Category } from "../interfaces";
-import NavbarDropdown from "./NavDropdown";
-
 interface Props {
-    categroy_list: Category[];
-    seleted_items: number[];
-    hashItem: (category_id: number, item_id: number) => number;
-    onToggleItem: (category_id: number, item_id: number) => void;
+    category_list: string[];
+    selected_category: string;
+    onCategorySelect: (category_name: string) => void;
 }
 
-function Navbar({
-    categroy_list,
-    seleted_items,
-    hashItem,
-    onToggleItem,
-}: Props) {
+function Navbar({ category_list, selected_category, onCategorySelect }: Props) {
+    const getNavLinkStyle = (cat: string) => {
+        return selected_category === cat
+            ? { color: "#FFFFFF", backgroundColor: "#000000" }
+            : {};
+    };
+
     return (
         <nav className="navbar navbar-expand-sm navbar-light bg-light">
             <div className="container-fluid">
-                <a href="#" className="navbar-brand">
-                    集邦
-                </a>
+                <h2 className="navbar-brand">集邦</h2>
                 <button
                     type="button"
                     className="navbar-toggler"
@@ -28,17 +23,20 @@ function Navbar({
                 >
                     <span className="navbar-toggler-icon"></span>
                 </button>
+
                 <div id="navbarCollapse" className="collapse navbar-collapse">
                     <ul className="nav navbar-nav">
-                        {categroy_list.map((cat, cat_id) => (
-                            <NavbarDropdown
-                                category={cat}
-                                category_id={cat_id}
-                                selected_items={seleted_items}
-                                hashItem={hashItem}
-                                toggleItem={onToggleItem}
-                                key={cat_id}
-                            />
+                        {category_list.map((cat) => (
+                            <li className="nav-item" key={cat}>
+                                <a
+                                    href="#"
+                                    className="nav-link"
+                                    onClick={() => onCategorySelect(cat)}
+                                    style={getNavLinkStyle(cat)}
+                                >
+                                    {cat}
+                                </a>
+                            </li>
                         ))}
                     </ul>
                 </div>
