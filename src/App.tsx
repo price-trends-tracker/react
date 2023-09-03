@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { SsdItem, PvItem, OtherItem, getItemName } from "./interfaces";
 import Navbar from "./components/Navbar";
 import Filter from "./components/Filter";
+import Plot from "./components/Plot";
 
 function App() {
     const [loading, setLoading] = useState(true);
@@ -70,6 +71,18 @@ function App() {
                             />
                         </div>
                     </div>
+                    {selected_item_index >= 0 && (
+                        <div className="col">
+                            <div id="plot">
+                                <Plot
+                                    selected_category={selected_category}
+                                    selected_item={
+                                        item_list[selected_item_index]
+                                    }
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </>
