@@ -1,7 +1,7 @@
 interface Props {
     category_list: string[];
     selected_category: string;
-    onCategorySelect: (category_name: string) => void;
+    onCategorySelect: (category_id: number) => void;
 }
 
 function Navbar({ category_list, selected_category, onCategorySelect }: Props) {
@@ -14,7 +14,7 @@ function Navbar({ category_list, selected_category, onCategorySelect }: Props) {
     return (
         <nav className="navbar navbar-expand-sm navbar-light bg-light">
             <div className="container-fluid">
-                <h2 className="navbar-brand">集邦</h2>
+                <h2 className="navbar-brand">Price Trend</h2>
                 <button
                     type="button"
                     className="navbar-toggler"
@@ -26,12 +26,12 @@ function Navbar({ category_list, selected_category, onCategorySelect }: Props) {
 
                 <div id="navbarCollapse" className="collapse navbar-collapse">
                     <ul className="nav navbar-nav">
-                        {category_list.map((cat) => (
+                        {category_list.map((cat, id) => (
                             <li className="nav-item" key={cat}>
                                 <a
                                     href="#"
                                     className="nav-link"
-                                    onClick={() => onCategorySelect(cat)}
+                                    onClick={() => onCategorySelect(id)}
                                     style={getNavLinkStyle(cat)}
                                 >
                                     {cat}

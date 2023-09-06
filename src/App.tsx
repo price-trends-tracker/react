@@ -1,23 +1,21 @@
 import { useEffect, useState } from "react";
-import { SsdItem, PvItem, OtherItem, getItemName } from "./interfaces";
+import { SsdItem, PvItem, OtherItem, getItemName } from "./interfaces/items";
 import Navbar from "./components/Navbar";
 import Filter from "./components/Filter";
 import Plot from "./components/Plot";
 
 function App() {
-    const [loading, setLoading] = useState(true);
-
     const [category_list, setCategoryList] = useState<string[]>([]);
-    const [selected_category, setSelectedCategory] = useState("");
+    const [active_category_id, setActiveCategoryId] = useState(-1);
 
     const [item_list, setItemList] = useState<(SsdItem | PvItem | OtherItem)[]>(
         []
     );
-    const [selected_item_index, setSelectedItemIndex] = useState<number>(-1);
+    const [active_item_name, setActiveItemName] = useState<string>("");
 
-    const toggleCategory = (cat: string) => {
-        setSelectedCategory(cat);
-        setSelectedItemIndex(-1);
+    const toggleCategory = (category_id: number) => {
+        setActiveCategoryId(category_id);
+        setActiveItemName("");
     };
 
     useEffect(() => {
@@ -25,36 +23,35 @@ function App() {
             .then((res) => res.json())
             .then((result) => {
                 setCategoryList(result);
-                setLoading(false);
+                setActiveCategoryId(0);
             });
     }, []);
 
     useEffect(() => {
-        if (!selected_category) return;
+        if (active_category_id < 0) return;
 
-        const endpoint = `http://127.0.0.1:8000/${selected_category.toLocaleLowerCase()}/`;
+        const cat_name = category_list[active_category_id];
+        const endpoint = `http://127.0.0.1:8000/${cat_name.toLocaleLowerCase()}`;
         fetch(endpoint)
             .then((res) => res.json())
-            .then((result) => {
-                setItemList(result);
-            });
-    }, [selected_category]);
+            .then((result) => setItemList(result));
+    }, [active_category_id]);
 
     return (
         <>
             <div id="navbar">
-                {loading ? (
-                    "Loading"
+                {active_category_id < 0 ? (
+                    <h1>Loading / Banned by CORS</h1>
                 ) : (
                     <Navbar
                         category_list={category_list}
-                        selected_category={selected_category}
+                        selected_category={category_list[active_category_id]}
                         onCategorySelect={toggleCategory}
                     />
                 )}
             </div>
 
-            {selected_category && (
+            {active_category_id >= 0 && (
                 <div className="row">
                     <div className="col-sm-3">
                         <div
@@ -63,22 +60,24 @@ function App() {
                             style={{ margin: "30px" }}
                         >
                             <Filter
-                                item_list={item_list.map((it) =>
-                                    getItemName(it)
-                                )}
-                                selected_index={selected_item_index}
-                                onItemSelect={setSelectedItemIndex}
+                                item_list={item_list}
+                                selected_name={active_item_name}
+                                onItemSelect={setActiveItemName}
                             />
                         </div>
                     </div>
-                    {selected_item_index >= 0 && (
-                        <div className="col">
+                    {active_item_name && (
+                        <div className="col-sm-8">
                             <div id="plot">
                                 <Plot
-                                    selected_category={selected_category}
-                                    selected_item={
-                                        item_list[selected_item_index]
+                                    selected_category={
+                                        category_list[active_category_id]
                                     }
+                                    selected_item={item_list.find(
+                                        (item) =>
+                                            getItemName(item) ==
+                                            active_item_name
+                                    )}
                                 />
                             </div>
                         </div>

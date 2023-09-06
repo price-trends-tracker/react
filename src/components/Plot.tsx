@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { SsdItem, PvItem, OtherItem, getItemName } from "../interfaces";
-import { OtherData } from "../interfaces";
+import { SsdItem, PvItem, OtherItem, getItemName } from "../interfaces/items";
+import { SsdData, OtherData } from "../interfaces/data";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 
@@ -10,7 +10,7 @@ interface Props {
 }
 
 function Plot({ selected_category, selected_item }: Props) {
-    const [data_list, setDataList] = useState<OtherData[]>([]);
+    const [data_list, setDataList] = useState<(SsdData | OtherData)[]>([]);
 
     useEffect(() => {
         const endpoint = `http://127.0.0.1:8000/${selected_category.toLocaleLowerCase()}/`;
@@ -21,17 +21,13 @@ function Plot({ selected_category, selected_item }: Props) {
             body: JSON.stringify(getBody(selected_item)),
         })
             .then((res) => res.json())
-            .then((result) => {
-                setDataList(result)
-                console.log(result);
-            });
+            .then((result) => setDataList(result));
     }, [selected_category, selected_item]);
 
     const getBody = (item: SsdItem | PvItem | OtherItem) => {
-        if ("brand" in item)
-            return {brand: item.brand}
+        if ("brand" in item) return { brand: item.brand };
 
-        const body = {item: item.item};
+        const body = { item: item.item };
         return "material" in item
             ? {
                   ...body,
@@ -44,7 +40,7 @@ function Plot({ selected_category, selected_item }: Props) {
     };
 
     const plot_data = {
-        labels: data_list.map((d) => d.last_update),
+        labels: data_list.map((d) => d.last_update.split("T")[0]),
         datasets: [
             {
                 label: getItemName(selected_item),
