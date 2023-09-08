@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { SsdItem, PvItem, OtherItem, getItemName } from "./interfaces/items";
 import Navbar from "./components/Navbar";
-import Filter from "./components/Filter";
-import Plot from "./components/Plot";
+import Filter from "./components/ItemFilter/Filter";
+import Canva from "./components/Canva/Canva";
 
 function App() {
     const [category_list, setCategoryList] = useState<string[]>([]);
@@ -51,8 +51,8 @@ function App() {
                 )}
             </div>
 
-            {active_category_id >= 0 && (
-                <div className="row">
+            <div className="row">
+                {active_category_id >= 0 && (
                     <div className="col-sm-3">
                         <div
                             className="card"
@@ -66,24 +66,19 @@ function App() {
                             />
                         </div>
                     </div>
-                    {active_item_name && (
-                        <div className="col-sm-8">
-                            <div id="plot">
-                                <Plot
-                                    selected_category={
-                                        category_list[active_category_id]
-                                    }
-                                    selected_item={item_list.find(
-                                        (item) =>
-                                            getItemName(item) ==
-                                            active_item_name
-                                    )}
-                                />
-                            </div>
-                        </div>
-                    )}
+                )}
+
+                <div className="col-sm-8">
+                    {
+                        <Canva
+                            active_category={category_list[active_category_id]}
+                            active_item={item_list.find(
+                                (item) => getItemName(item) == active_item_name
+                            )}
+                        />
+                    }
                 </div>
-            )}
+            </div>
         </>
     );
 }
