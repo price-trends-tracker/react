@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { SsdItem, PvItem, OtherItem, getItemName } from "../interfaces/items";
+import { SsdItem, PvItem, OtherItem, getItemName } from "../../interfaces/items";
 import FilterGrp from "./FilterGrp";
 
 interface Props {
