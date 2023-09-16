@@ -4,7 +4,6 @@ import Navbar from "./components/Navbar";
 import Filter from "./components/ItemFilter/Filter";
 import Canva from "./components/Canva/Canva";
 
-
 function App() {
     const category_list = JSON.parse(import.meta.env.VITE_REACT_CATEGORIES);
     const [active_category_id, setActiveCategoryId] = useState(0);
@@ -19,7 +18,9 @@ function App() {
 
     useEffect(() => {
         const cat_name = category_list[active_category_id].toLocaleLowerCase();
-        const endpoint = `${import.meta.env.VITE_REACT_SERVER_URL}/${cat_name}/meta`;
+        const endpoint = `${
+            import.meta.env.VITE_REACT_SERVER_URL
+        }/${cat_name}/meta`;
         fetch(endpoint)
             .then((res) => res.json())
             .then((result) => setItemList(result));
@@ -54,16 +55,16 @@ function App() {
                     </div>
                 }
 
-                {/* <div className="col-sm-8">
+                <div className="col-sm-8">
                     {
                         <Canva
                             active_category={category_list[active_category_id]}
                             active_item={item_list.find(
-                                (item) => getItemName(item) == active_item_name
+                                (item) => item.id == active_item_id
                             )}
                         />
                     }
-                </div> */}
+                </div>
             </div>
         </>
     );

@@ -3,18 +3,13 @@ import { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 
-import {
-    SsdItem,
-    PvItem,
-    OtherItem,
-    getItemName,
-} from "../../interfaces/items";
+import { Item, getItemName } from "../../interfaces/items";
 import { SsdData, OtherData } from "../../interfaces/data";
 import { binarySearch } from "../../utils/binary_search";
 
 interface Props {
     active_category: string;
-    active_item?: SsdItem | PvItem | OtherItem;
+    active_item?: Item;
     start_dt: string;
     setStartDt: (dt: string) => void;
     end_dt: string;
@@ -44,13 +39,10 @@ function Plot({
 
         setLoading(true);
 
-        const endpoint = `http://127.0.0.1:8000/${active_category.toLocaleLowerCase()}/`;
+        const cat_name = active_category.toLocaleLowerCase()
+        const endpoint = `${import.meta.env.VITE_REACT_SERVER_URL}/${cat_name}/data/${active_item.id}`;
 
-        fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(getBody(active_item)),
-        })
+        fetch(endpoint)
             .then((res) => res.json())
             .then((result) => {
                 setDataList(result);
@@ -63,21 +55,6 @@ function Plot({
                 setLoading(false);
             });
     }, [active_category, active_item]);
-
-    const getBody = (item: SsdItem | PvItem | OtherItem) => {
-        if ("brand" in item) return { brand: item.brand };
-
-        const body = { item: item.item };
-        return "material" in item
-            ? {
-                  ...body,
-                  material: item.material,
-              }
-            : {
-                  ...body,
-                  price_type: item.price_type,
-              };
-    };
 
     const getPlotData = () => {
         if (!active_item || loading) {
