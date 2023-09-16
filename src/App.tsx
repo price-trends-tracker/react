@@ -1,37 +1,25 @@
 import { useEffect, useState } from "react";
-import { SsdItem, PvItem, OtherItem, getItemName } from "./interfaces/items";
+import { Item } from "./interfaces/items";
 import Navbar from "./components/Navbar";
 import Filter from "./components/ItemFilter/Filter";
 import Canva from "./components/Canva/Canva";
 
-function App() {
-    const [category_list, setCategoryList] = useState<string[]>([]);
-    const [active_category_id, setActiveCategoryId] = useState(-1);
 
-    const [item_list, setItemList] = useState<(SsdItem | PvItem | OtherItem)[]>(
-        []
-    );
-    const [active_item_name, setActiveItemName] = useState<string>("");
+function App() {
+    const category_list = JSON.parse(import.meta.env.VITE_REACT_CATEGORIES);
+    const [active_category_id, setActiveCategoryId] = useState(0);
+
+    const [item_list, setItemList] = useState<Item[]>([]);
+    const [active_item_id, setActiveItemId] = useState<number>(-1);
 
     const toggleCategory = (category_id: number) => {
         setActiveCategoryId(category_id);
-        setActiveItemName("");
+        setActiveItemId(-1);
     };
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/categories/")
-            .then((res) => res.json())
-            .then((result) => {
-                setCategoryList(result);
-                setActiveCategoryId(0);
-            });
-    }, []);
-
-    useEffect(() => {
-        if (active_category_id < 0) return;
-
-        const cat_name = category_list[active_category_id];
-        const endpoint = `http://127.0.0.1:8000/${cat_name.toLocaleLowerCase()}`;
+        const cat_name = category_list[active_category_id].toLocaleLowerCase();
+        const endpoint = `${import.meta.env.VITE_REACT_SERVER_URL}/${cat_name}/meta`;
         fetch(endpoint)
             .then((res) => res.json())
             .then((result) => setItemList(result));
@@ -40,19 +28,17 @@ function App() {
     return (
         <>
             <div id="navbar">
-                {active_category_id < 0 ? (
-                    <h1>Loading / Banned by CORS</h1>
-                ) : (
+                {
                     <Navbar
                         category_list={category_list}
                         selected_category={category_list[active_category_id]}
                         onCategorySelect={toggleCategory}
                     />
-                )}
+                }
             </div>
 
             <div className="row">
-                {active_category_id >= 0 && (
+                {
                     <div className="col-sm-3">
                         <div
                             className="card"
@@ -61,14 +47,14 @@ function App() {
                         >
                             <Filter
                                 item_list={item_list}
-                                selected_name={active_item_name}
-                                onItemSelect={setActiveItemName}
+                                active_item_id={active_item_id}
+                                onItemSelect={setActiveItemId}
                             />
                         </div>
                     </div>
-                )}
+                }
 
-                <div className="col-sm-8">
+                {/* <div className="col-sm-8">
                     {
                         <Canva
                             active_category={category_list[active_category_id]}
@@ -77,7 +63,7 @@ function App() {
                             )}
                         />
                     }
-                </div>
+                </div> */}
             </div>
         </>
     );

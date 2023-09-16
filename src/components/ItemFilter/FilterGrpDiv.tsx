@@ -1,24 +1,26 @@
+import { Item, getItemName } from "../../interfaces/items";
+
 interface Props {
-    item_list: string[];
-    active_name: string;
-    onSelect: (name: string) => void;
+    item_list: Item[];
+    active_id: number;
+    onSelect: (id: number) => void;
 }
 
-function FilterGrpDiv({ item_list, active_name, onSelect }: Props) {
+function FilterGrpDiv({ item_list, active_id, onSelect }: Props) {
     return (
         <>
-            {item_list.map((it, id) => (
+            {item_list.map(it => (
                 <li
                     className={
                         "list-group-item " +
-                        (it === active_name
+                        (it.id === active_id
                             ? "active"
                             : "list-group-item-action list-group-item-light")
                     }
-                    key={id}
-                    onClick={() => onSelect(it)}
+                    key={it.id}
+                    onClick={() => onSelect(it.id)}
                 >
-                    {it}
+                    {getItemName(it)}
                 </li>
             ))}
         </>
