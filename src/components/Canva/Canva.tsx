@@ -2,11 +2,11 @@ import { useState } from "react";
 
 import DatePicker from "./DatePicker";
 import Plot from "./Plot";
-import { SsdItem, PvItem, OtherItem } from "../../interfaces/items";
+import { Item } from "../../interfaces/items";
 
 interface Props {
     active_category: string;
-    active_item?: SsdItem | PvItem | OtherItem;
+    active_item?: Item;
 }
 
 function Canva({ active_category, active_item }: Props) {

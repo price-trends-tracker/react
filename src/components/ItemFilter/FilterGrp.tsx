@@ -1,6 +1,7 @@
-import FilterGrpBtn from "./FilterGrpBtn";
-import FilterGrpDiv from "./FilterGrpDiv";
+import { Item } from "../../interfaces/items";
 
+import FilterGrpBtn from "./FilterGrpBtn";
+import FilterGrpItem from "./FilterGrpItem";
 
 interface GrpInfo {
     name: string;
@@ -10,9 +11,9 @@ interface GrpInfo {
 }
 
 interface ItemsInfo {
-    item_list: string[];
-    active_name: string;
-    onSelect: (name: string) => void;
+    item_list: Item[];
+    active_id: number;
+    onSelect: (id: number) => void;
 }
 
 interface Props {
@@ -32,11 +33,15 @@ function FilterGrp({ grp_info, items_info }: Props) {
                 onSelect={grp_info.onSelect}
             />
             <div className={grp_selected ? "collapse show" : "collapse"}>
-                <FilterGrpDiv
-                    item_list={items_info.item_list}
-                    active_name={items_info.active_name}
-                    onSelect={items_info.onSelect}
-                />
+                {items_info.item_list.map((it) => (
+                    <div key={it.id}>
+                        <FilterGrpItem
+                            item={it}
+                            is_active={it.id === items_info.active_id}
+                            onSelect={items_info.onSelect}
+                        />
+                    </div>
+                ))}
             </div>
         </ul>
     );
