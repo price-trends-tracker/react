@@ -1,0 +1,43 @@
+.form-container {
+    margin: 50px auto;
+    display: grid;
+    place-items: center;
+    font-size: 2em;
+}
+
+.form-container
+    .card {
+        border-radius: 3%;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: center;
+    }
+
+    button.login-submit {
+        cursor: pointer;
+        padding: 10px 20px;
+        border-radius: 10%;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 10px;
+    }
+
+    input {
+        border: 1px solid black;
+    }
+
+    p.fail-msg {
+        color: red;
+        font-size: 18px;
+    }

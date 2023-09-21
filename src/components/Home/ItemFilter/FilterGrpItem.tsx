@@ -1,4 +1,4 @@
-import { Item, getItemName } from "../../interfaces/items";
+import { Item, getItemName } from "../../../interfaces/items";
 
 interface Props {
     item: Item;
