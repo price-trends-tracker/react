@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 
+import { AuthError } from "../../interfaces/response_error";
 import { Item } from "../../interfaces/items";
 import Navbar from "./Navbar";
 import Filter from "./ItemFilter/Filter";
@@ -27,10 +28,23 @@ function Home() {
             .then((res) => {
                 if (res.ok) return res.json();
 
-                throw new Error("Not logged in yet.");
+                return res.text().then((data) => {
+                    throw new Error(data);
+                });
             })
             .then((result) => setItemList(result))
-            .catch(() => window.location.replace("/login"));
+            .catch((err) => {
+                const data = JSON.parse(err.message);
+                const reason: AuthError = JSON.parse(data.detail);
+                if (reason.user_invalid === true)
+                    window.location.replace("/error/unauthorized-user");
+                else if (
+                    reason.token_missing === true ||
+                    reason.token_invalid === true
+                )
+                    window.location.replace("/login");
+                else throw err;
+            });
     }, [active_category_id]);
 
     return (
