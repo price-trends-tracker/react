@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import DatePicker from "./DatePicker";
 import Plot from "./Plot";
-import { Item } from "../../interfaces/items";
+import { Item } from "../../../interfaces/items";
 
 interface Props {
     active_category: string;

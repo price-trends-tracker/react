@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { Item } from "../../interfaces/items";
+import { Item } from "../../../interfaces/items";
 import FilterGrp from "./FilterGrp";
 
 interface Props {

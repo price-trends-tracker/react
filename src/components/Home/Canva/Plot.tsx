@@ -3,9 +3,10 @@ import { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 
-import { Item, getItemName } from "../../interfaces/items";
-import { SsdData, OtherData } from "../../interfaces/data";
-import { binarySearch } from "../../utils/binary_search";
+import { AuthError } from "../../../interfaces/response_error";
+import { Item, getItemName } from "../../../interfaces/items";
+import { SsdData, OtherData } from "../../../interfaces/data";
+import { binarySearch } from "../../../utils/binary_search";
 
 interface Props {
     active_category: string;
@@ -39,11 +40,19 @@ function Plot({
 
         setLoading(true);
 
-        const cat_name = active_category.toLocaleLowerCase()
-        const endpoint = `${import.meta.env.VITE_REACT_SERVER_URL}/${cat_name}/data/${active_item.id}`;
+        const cat_name = active_category.toLocaleLowerCase();
+        const endpoint = `${
+            import.meta.env.VITE_REACT_SERVER_URL
+        }/${cat_name}/data/${active_item.id}`;
 
-        fetch(endpoint)
-            .then((res) => res.json())
+        fetch(endpoint, { credentials: "include" })
+            .then((res) => {
+                if (res.ok) return res.json();
+
+                return res.text().then((data) => {
+                    throw new Error(data);
+                });
+            })
             .then((result) => {
                 setDataList(result);
                 setStartDt(
@@ -53,6 +62,15 @@ function Plot({
                 setMinDt(result[0].last_update);
                 setMaxDt(result[result.length - 1].last_update);
                 setLoading(false);
+            })
+            .catch((err) => {
+                const data = JSON.parse(err.message);
+                const reason: AuthError = JSON.parse(data.detail);
+                if (reason.user_invalid === true)
+                    window.location.replace("/error/unauthorized-user")
+                else if (reason.token_missing === true || reason.token_invalid === true)
+                    window.location.replace("/login");
+                else throw err;
             });
     }, [active_category, active_item]);
 

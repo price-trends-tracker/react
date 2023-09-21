@@ -1,4 +1,4 @@
-import { Item } from "../../interfaces/items";
+import { Item } from "../../../interfaces/items";
 
 import FilterGrpBtn from "./FilterGrpBtn";
 import FilterGrpItem from "./FilterGrpItem";
